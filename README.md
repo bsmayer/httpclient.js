@@ -1,5 +1,7 @@
 # HTTPCLIENT.JS
 
+[![npm version](https://badge.fury.io/js/httpclient.js.svg)](https://badge.fury.io/js/httpclient.js)
+
 Rest made simple, intuitive and robust. This is a rest client for Javascript projects. 
 
 ## Instalation
