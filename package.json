@@ -1,6 +1,6 @@
 {
   "name": "httpclient.js",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Rest client made simple and intuitive",
   "main": "dist/index.js",
   "types": "dist",

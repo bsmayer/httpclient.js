@@ -1,2 +1,7 @@
 src/
 .vscode/
+tsconfig.json
+.eslintrc.js
+.gitignore
+jest.config.js
+nodemon.json
