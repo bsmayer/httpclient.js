@@ -3,6 +3,7 @@
   "repository": "https://github.com/bsmayer/httpclient.js",
   "version": "1.0.0",
   "description": "Rest client made simple and intuitive",
+  "keywords": ["rest", "client", "axios", "request", "httpclient", "restful"],
   "main": "dist/index.js",
   "types": "dist",
   "license": "MIT",
