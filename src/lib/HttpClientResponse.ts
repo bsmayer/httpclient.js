@@ -1,6 +1,7 @@
-import axios, { Method, AxiosResponse } from 'axios'
+import axios, { Method } from 'axios'
 
 import HttpClientInterceptors from './HttpClientInterceptors'
+import HttpClientRetryStrategy from './HttpClientRetryStrategy'
 
 export default class HttpClientResponse {
   private baseUrl: string;
@@ -10,6 +11,7 @@ export default class HttpClientResponse {
   private body: any;
   private headers: any;
   private interceptors: HttpClientInterceptors;
+  private retryConfig: HttpClientRetryStrategy;
 
   constructor (
     baseUrl: string,
@@ -18,7 +20,8 @@ export default class HttpClientResponse {
     method: Method,
     body: any,
     headers: any,
-    interceptors: HttpClientInterceptors
+    interceptors: HttpClientInterceptors,
+    retryConfig: HttpClientRetryStrategy
   ) {
     this.baseUrl = baseUrl
     this.paths = paths
@@ -27,6 +30,7 @@ export default class HttpClientResponse {
     this.body = body
     this.headers = headers
     this.interceptors = interceptors
+    this.retryConfig = retryConfig
   }
 
   public async getResponse<T> (): Promise<T> {
@@ -44,9 +48,8 @@ export default class HttpClientResponse {
       return path + '/' + curr
     }, '')
 
-    let response: AxiosResponse
-    try {
-      response = await axios({
+    return this.fetchRetry<T>(async (): Promise<T> => {
+      const response = await axios({
         method: this.method,
         baseURL: this.baseUrl,
         url: finalPath,
@@ -54,7 +57,15 @@ export default class HttpClientResponse {
         params: this.params,
         headers: this.headers
       })
-    } catch (err) {
+
+      if (this.interceptors) {
+        const resolvedResponse = this.interceptors.applyResponseInterceptor(response.data)
+        if (resolvedResponse)
+          return resolvedResponse as T
+      }
+
+      return response.data as T
+    }).catch(err => {
       if (this.interceptors) {
         const resolvedError = this.interceptors.applyErrorInterceptor(err)
         if (resolvedError)
@@ -62,14 +73,26 @@ export default class HttpClientResponse {
       }
 
       throw err
-    }
+    })
+  }
 
-    if (this.interceptors) {
-      const resolvedResponse = this.interceptors.applyResponseInterceptor(response.data)
-      if (resolvedResponse)
-        return resolvedResponse as T
-    }
+  private fetchRetry<T> (request: () => Promise<T>, attempt = 1): Promise<T> {
+    return new Promise<T>((resolve, reject): void => {
+      request()
+        .then(response => resolve(response))
+        .catch(err => {
+          if (!this.retryConfig)
+            return reject(err)
 
-    return response.data as T
+          if (attempt >= this.retryConfig.getAttempts())
+            return reject(err)
+
+          setTimeout(() => {
+            return this.fetchRetry(request, attempt + 1)
+              .then(res => resolve(res))
+              .catch(err => reject(err))
+          }, this.retryConfig.getInterval() * (this.retryConfig.isExponential() ? attempt + 1 : 1))
+        })
+    })
   }
 }
