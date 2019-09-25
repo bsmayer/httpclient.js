@@ -63,4 +63,11 @@ describe('HttpClient', () => {
     expect(response).toBeDefined()
     expect(response).toBeInstanceOf(HttpClientResponse)
   })
+
+  it('should set a method PATCH and return a new HttpClientResponse', () => {
+    const response = client.patch()
+    expect((client as any).method).toEqual('patch')
+    expect(response).toBeDefined()
+    expect(response).toBeInstanceOf(HttpClientResponse)
+  })
 })

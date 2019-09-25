@@ -3,23 +3,6 @@ import moment from 'moment'
 import { HttpClientBuilder, HttpClientInterceptors, HttpClientRetryStrategy } from '../src'
 
 describe('HttpClientResponse', () => {
-  const interceptors = HttpClientInterceptors.create()
-    .useErrorInterceptor(err => {
-      if (err.response) {
-        switch (err.response.status) {
-          case 401:
-            return { message: 'its ok, let it pass' }
-          case 404:
-            throw new Error('404 error, shit!')
-        }
-      }
-      throw new Error(err.message)
-    })
-    .useResponseInterceptor<any>(response => {
-      if (response && response.return)
-        return response.return
-    })
-
   beforeEach(() => {
     nock('http://api.github.com')
       .get('/users/throw/401')
@@ -90,6 +73,9 @@ describe('HttpClientResponse', () => {
   }, 15000)
 
   it('should intercept the response and get the main object', async () => {
+    const interceptors = HttpClientInterceptors.create()
+      .useResponseInterceptor((response: any) => response.return)
+
     const response = await HttpClientBuilder
       .create('http://api.github.com')
       .useInterceptors(interceptors)
@@ -127,4 +113,32 @@ describe('HttpClientResponse', () => {
         expect(later.diff(before, 'seconds')).toBeGreaterThanOrEqual(2)
       })
   }, 5000)
+
+  it('should not retry when status code does not match with retry rules', async () => {
+    const interceptors = HttpClientInterceptors.create()
+      .useErrorInterceptor(() => {
+        throw new Error('we should catch this error')
+      })
+
+    const retry = HttpClientRetryStrategy.create()
+      .forHttpStatusCodes(500)
+      .attempt(3)
+      .interval(1000)
+      .useExponentialStrategy(false)
+
+    const builder = HttpClientBuilder.create('http://api.github.com')
+      .useInterceptors(interceptors)
+      .useRetryStrategy(retry)
+
+    const before = moment()
+    await builder.client()
+      .path('users', 'throw', '401')
+      .get()
+      .getResponse<any>()
+      .catch(err => {
+        const later = moment()
+        expect(err.message).toEqual('we should catch this error')
+        expect(later.diff(before, 'seconds')).toBeLessThanOrEqual(0)
+      })
+  })
 })

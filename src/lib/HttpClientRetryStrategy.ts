@@ -3,6 +3,7 @@ export default class HttpClientRetryStrategy {
   private msInterval: number;
   private exponentialRetry: boolean;
   private statusCodes: number[];
+  private statusCodeValidation!: (statusCode: number) => boolean;
 
   constructor () {
     this.attempts = 3
@@ -30,6 +31,11 @@ export default class HttpClientRetryStrategy {
     return this
   }
 
+  public shouldRetryWhen (statusCodeValidation: (statusCode: number) => boolean): HttpClientRetryStrategy {
+    this.statusCodeValidation = statusCodeValidation
+    return this
+  }
+
   public useExponentialStrategy (isExponential = true): HttpClientRetryStrategy {
     this.exponentialRetry = isExponential
     return this
@@ -43,11 +49,19 @@ export default class HttpClientRetryStrategy {
     return this.msInterval
   }
 
-  public getStatusCodes (): number[] {
-    return this.statusCodes
-  }
-
   public isExponential (): boolean {
     return this.exponentialRetry
+  }
+
+  public checkIfShouldRetry (statusCode: number): boolean {
+    let shouldRetry = true
+
+    if (this.statusCodes && this.statusCodes.length) {
+      shouldRetry = !!this.statusCodes.find(code => statusCode === code)
+    } else if (this.statusCodeValidation) {
+      shouldRetry = this.statusCodeValidation(statusCode)
+    }
+
+    return shouldRetry
   }
 }

@@ -87,6 +87,9 @@ export default class HttpClientResponse {
           if (attempt >= this.retryConfig.getAttempts())
             return reject(err)
 
+          if (err.response && err.response.status && !this.retryConfig.checkIfShouldRetry(err.response.status))
+            return reject(err)
+
           setTimeout(() => {
             return this.fetchRetry(request, attempt + 1)
               .then(res => resolve(res))
