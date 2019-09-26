@@ -3,7 +3,14 @@
   "repository": "https://github.com/bsmayer/httpclient.js",
   "version": "1.0.0",
   "description": "Rest client made simple and intuitive",
-  "keywords": ["rest", "client", "axios", "request", "httpclient", "restful"],
+  "keywords": [
+    "rest",
+    "client",
+    "axios",
+    "request",
+    "httpclient",
+    "restful"
+  ],
   "main": "dist/index.js",
   "types": "dist",
   "license": "MIT",
@@ -17,6 +24,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.7",
     "@typescript-eslint/eslint-plugin": "^2.3.0",
     "@typescript-eslint/parser": "^2.3.0",
     "eslint": "^6.4.0",
@@ -28,6 +36,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.9.0",
+    "moment": "^2.24.0",
     "nock": "^11.3.4",
     "nodemon": "^1.19.2",
     "prettier": "^1.18.2",

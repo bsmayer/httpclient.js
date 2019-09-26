@@ -1,7 +1,9 @@
 import { Method } from 'axios'
 
+import AuthorizationType from './constants/AuthorizationType'
 import HttpClientResponse from './HttpClientResponse'
 import HttpClientInterceptors from './HttpClientInterceptors'
+import HttpClientRetryStrategy from './HttpClientRetryStrategy'
 
 export default class HttpClient {
   private baseUrl: string;
@@ -11,13 +13,16 @@ export default class HttpClient {
   private body: any;
   private headers: any;
   private interceptors: HttpClientInterceptors;
+  private retryConfig: HttpClientRetryStrategy;
 
   constructor (
     baseUrl: string,
-    interceptors: HttpClientInterceptors
+    interceptors: HttpClientInterceptors,
+    retryConfig: HttpClientRetryStrategy
   ) {
     this.baseUrl = baseUrl
     this.interceptors = interceptors
+    this.retryConfig = retryConfig
   }
 
   public path (...paths: string[]): HttpClient {
@@ -46,6 +51,45 @@ export default class HttpClient {
     return this
   }
 
+  public authorization (type: string, value: string): HttpClient {
+    return this.header('Authorization', `${type} ${value}`)
+  }
+
+  public basicAuthorization (user: string, password: string): HttpClient {
+    return this.authorization(AuthorizationType.BASIC, Buffer.from(`${user}:${password}`).toString('base64'))
+  }
+
+  public bearerAuthorization (value: string): HttpClient {
+    return this.authorization(AuthorizationType.BEARER, value)
+  }
+
+  public retry (attempt: number, interval: number): HttpClient {
+    if (!this.retryConfig)
+      this.retryConfig = HttpClientRetryStrategy.create()
+
+    this.retryConfig
+      .attempt(attempt)
+      .interval(interval)
+
+    return this
+  }
+
+  public retryOnHttpStatusCodes (...codes: number[]): HttpClient {
+    if (!this.retryConfig)
+      this.retryConfig = HttpClientRetryStrategy.create()
+
+    this.retryConfig.forHttpStatusCodes(...codes)
+    return this
+  }
+
+  public retryWhen (validationFn: (statusCode: number) => boolean): HttpClient {
+    if (!this.retryConfig)
+      this.retryConfig = HttpClientRetryStrategy.create()
+
+    this.retryConfig.shouldRetryWhen(validationFn)
+    return this
+  }
+
   public get (): HttpClientResponse {
     this.method = 'get'
     return this.createHttpClientResponse()
@@ -58,6 +102,11 @@ export default class HttpClient {
 
   public put (): HttpClientResponse {
     this.method = 'put'
+    return this.createHttpClientResponse()
+  }
+
+  public patch (): HttpClientResponse {
+    this.method = 'patch'
     return this.createHttpClientResponse()
   }
 
@@ -77,7 +126,8 @@ export default class HttpClient {
       this.method,
       this.body,
       this.headers,
-      this.interceptors
+      this.interceptors,
+      this.retryConfig
     )
   }
 }
