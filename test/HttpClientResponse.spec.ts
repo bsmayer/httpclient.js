@@ -141,4 +141,18 @@ describe('HttpClientResponse', () => {
         expect(later.diff(before, 'seconds')).toBeLessThanOrEqual(0)
       })
   })
+
+  it('should apply the reqyest interceptor', async () => {
+    const interceptors = HttpClientInterceptors.create()
+      .useRequestInterceptor(client => client.path('users', '200'))
+      .useResponseInterceptor((response: any) => response.return)
+
+    const response = await HttpClientBuilder.create('http://api.github.com')
+      .useInterceptors(interceptors)
+      .client()
+      .get()
+      .getResponse<any>()
+
+    expect(response.name).toEqual('Bruno Mayer')
+  })
 })
