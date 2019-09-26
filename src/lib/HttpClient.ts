@@ -63,14 +63,6 @@ export default class HttpClient {
     return this.authorization(AuthorizationType.BEARER, value)
   }
 
-  public retryOnHttpStatusCodes (...codes: number[]): HttpClient {
-    if (!this.retryConfig)
-      this.retryConfig = HttpClientRetryStrategy.create()
-
-    this.retryConfig.forHttpStatusCodes(...codes)
-    return this
-  }
-
   public retry (attempt: number, interval: number): HttpClient {
     if (!this.retryConfig)
       this.retryConfig = HttpClientRetryStrategy.create()
@@ -79,6 +71,22 @@ export default class HttpClient {
       .attempt(attempt)
       .interval(interval)
 
+    return this
+  }
+
+  public retryOnHttpStatusCodes (...codes: number[]): HttpClient {
+    if (!this.retryConfig)
+      this.retryConfig = HttpClientRetryStrategy.create()
+
+    this.retryConfig.forHttpStatusCodes(...codes)
+    return this
+  }
+
+  public retryWhen (validationFn: (statusCode: number) => boolean): HttpClient {
+    if (!this.retryConfig)
+      this.retryConfig = HttpClientRetryStrategy.create()
+
+    this.retryConfig.shouldRetryWhen(validationFn)
     return this
   }
 
