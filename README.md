@@ -1,29 +1,54 @@
-# HTTPCLIENT.JS
+<div align="center">
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <img src="./docs/logo.png" alt="HTTPCLIENT.JS - Rest made simple, robust and intuitive" />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+</div>
+
 
 [![npm version](https://badge.fury.io/js/httpclient.js.svg)](https://badge.fury.io/js/httpclient.js)
 
-Rest made simple, intuitive and robust. This is a rest client for Javascript projects. 
+Friendly wrapper to use with your favorite rest client in your Javascript projects. Through intuitive builders, you can make your requests looking much more readable, isolating your configuration and creating robust api calls without having to concern about the library you're using. 
 
-# Why another rest client?
+Because we :heart: __axios__, this library is shipped with it already, but you're free to use your own instance of any of our supported clients.
 
-There are a lot of famous rest clients out there: axios, request, got, super agent... Why another rest client? 
+Currently supported libraries are:
+- axios (https://github.com/axios/axios)
+- request (https://github.com/request/request)
+- got (https://github.com/sindresorhus/got)
 
-Although those are really good libraries (we love and use axios here), they are a bit repetitive and if you're making a huge request with a lot of paths and parameters, it tends to be a bit harder to read. 
+We strongly recommend the use of this library with __Typescript__.
 
-When working on bigger projects, specially using Typescript, sometimes you need something simple and more readable. Nothing like a good builder for making things flow better. 
+# Benefits 
 
-> So you're telling me this library is just a wrapper on axios?
+- No more complex configuration objects
+- Any library, same syntax
+- Cleaner builder for complex queries
+- Isolation of configuration
+- Retry strategy made easy, for global or individual request
+- Interceptors for requests, response and errors
+- Shipped with defaults for simple case uses
 
-Yes, this library is just an wrapper on axios. It offers you a different and friendly sintax for writing your http requests, using axios behind the scenes. You're able to isolate your configuration from your requests, making things a lot cleaner. 
+# Motivation
 
-# Roadmap
+With the large amount of rest clients out there, choosing between them can be quite painful. But we all have the right to use our favorites, right? __The problem is__, none of them have the same syntax or use the same approach for handling errors. Also, creating middleware is not that intuitive and making complex requests can become not as readable as we want. 
 
-- Support for all HTTP methods (right now we're supporting GET, POST, PUT, PATCH and DELETE).
-- Resilience fallback.
+So, what if we could always use the same code, no matter what rest client we're using, with a nice query builder? 
 
-# How to use
+__That's the main idea of HTTPCLIENT.JS__ - This is not another rest client. This is a wrapper for improving the creating of your requests and the readability of your code, while working with the well known and solid rest clients out there.
 
-## Instalation
+# Installation
 
 ```bash
 yarn add httpclient.js
@@ -34,6 +59,192 @@ Or
 ```bash
 npm install httpclient.js --save
 ```
+
+# Getting started
+
+If you want to have a quick start with zero configuration, you're at the right place. Check out this simple example.
+
+```ts
+import { HttpClientBuilder } from 'httpclient.js'
+
+interface User {
+  id: string;
+  login: string;
+  name: string;
+  avatar_url: string;
+}
+
+export default class GithubService {
+  private api: HttpClientBuilder
+
+  constructor() {
+    this.api = HttpClientBuilder.create('https://api.github.com')
+  }
+
+  public async getUser(username: string): Promise<User> {
+    return await this.api.client()
+      .path('users', username)
+      .get()
+      .getResponse<User>();
+  }
+}
+```
+
+Looks simple, because it is. The code speaks for itself. With zero configuration, you're already able to make your queries using a smooth builder and get your response converted to your type. 
+
+# Building requests
+
+Before you start composing your request, you need to create a new instance of `HttpClientBuilder`. This class is responsible for storing your configuration and pass along to your requests. You can have as many __HttpClientBuilder__ instances as you want, but normally we keep it inside a separate file in the root of our application, so that we can use the same instance every time we need to make a new request.
+
+# 
+
+## 1. `HttpClientBuilder`
+
+### __.create(base_url)__
+
+Create a new instance of `HttpClientBuilder`, passing the base URL of your api. This will enable the other configuration options. 
+
+### __.useInterceptors(interceptors)__
+
+By using this method you're able to inject your interceptors as middlewares. Interceptors are instance of `HttpClientInterceptors` and you can read more about them below. This library does not ship with default interceptors.
+
+### __.useRetryStrategy(retry)__
+
+This method enable the retry strategy in all of your requests. It receives an instance of `HttpClientRetryStrategy` and you can read more about it below. 
+
+### __.client()__
+
+This method retrieves a new instance of `HttpClient` class. By calling this function you will be able to start making your queries. Normally, for each query we're doing, we need to retrieve a new instance of the client. 
+
+#
+
+## 2. `HttpClient`
+
+### __.path(...paths)__
+
+This is normally the first method we call after retrieving a new client. Here you pass as many paths as you want. For instance: 
+
+```ts
+this.api.client()
+  .path('path_1', 'path_2', 'path_3')
+```
+
+Later it will be translated to `path_1/path_2/path_3`.
+
+### __.query(name, value)__
+
+Sets a new query string, receiving the name of your querystring, followed by the value. 
+
+```ts
+this.api.client()
+  .query('name', 'John Doe')
+  .query('sort_by', 'age')
+```
+
+You can pass as many querystrings as you want.
+
+### __.payload(obj)__
+
+Specify the payload that will be sent to the API. It should be a Javascript object. 
+
+```ts
+this.api.client()
+  .payload({
+    name: 'John Doe',
+    age: 25,
+    newsletter: true
+  })
+```
+
+### __.header(name, value)__
+
+Sets a new header to your request, receiving a name and a value. You can have as many headers as you want.
+
+```ts
+this.api.client()
+  .header('x-ip', '192.168.0.1')
+  .header('x-username', 'john_doe')
+```
+
+### ___.authorization(type, value)__
+
+Sets a new Authorization header to your request. It receives a type (Basic, Bearer, etc) and a value.
+
+```ts
+this.api.client()
+  .authorization('Basic', Buffer.from('username:password').toString('base64'))
+```
+
+### __.basicAuthorization(username, password)__
+
+Sets a new Basic Authorization header to your request, receiving a username and password. This method transforms the `username:password` to a base64 string before sending to the server.
+
+```ts
+this.api.client()
+  .basicAuthorization('john_doe', 'secure_password')
+```
+
+### __.bearerAuthorization(value)__
+
+Sets a new Bearer Authorization header, receiving the token.
+
+```ts
+this.api.client()
+  .bearerAuthorization('JWT_HERE')
+```
+
+### __.retry(max_attempts, interval_in_ms)__
+
+Using this method you're enabling retry strategy for this request only. If you already set a retry strategy before using `HttpClientRetryStrategy`, it will override it.
+
+The first parameter tells how many times we want to retry. The second parameter tells the interval between retries in milliseconds.
+
+```ts
+this.api.client()
+  .retry(3, 1000)
+```
+
+### __.retryOnHttpStatusCodes(...codes)__
+
+Enables retry strategy for this request only, manually passing the HTTP status codes that it should retry in case of failure. 
+
+```ts
+this.api.client()
+  .retryOnHttpStatusCodes(500, 501, 502, 503)
+```
+
+### __.retryWhen(status_code => {})
+
+Similar to `.retryOnHttpStatusCodes`, but with `.retryWhen` you can pass a function which receives the status code and determine if we need to retry or not. 
+
+```ts
+this.api.client()
+  .retryWhen(statusCode => statusCode >= 500 || statusCode !== 401)
+```
+
+### __.get()__
+
+Fires a HTTP GET
+
+### __.post()__
+
+Fires a HTTP POST
+
+### __.put()__
+
+Fires a HTTP PUT
+
+### __.patch()__
+
+Fires a HTTP PATCH
+
+### __.delete()__
+
+Fires a HTTP DELETE
+
+### __.getResponse()__
+
+
 
 ## Usage
 
