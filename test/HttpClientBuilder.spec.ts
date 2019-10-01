@@ -17,8 +17,8 @@ describe('HttpClientBuilder', () => {
     const builder = HttpClientBuilder
       .create('http://url')
       .useInterceptors(HttpClientInterceptors.create())
-    expect((builder as any).interceptors).not.toBeNull()
-    expect((builder as any).interceptors).toBeDefined()
+    expect((builder as any).configuration.interceptors).not.toBeNull()
+    expect((builder as any).configuration.interceptors).toBeDefined()
   })
 
   it('should create a new HttpClient', () => {
@@ -29,6 +29,6 @@ describe('HttpClientBuilder', () => {
     const client = builder.client()
     expect(client).toBeInstanceOf(HttpClient)
     expect((client as any).baseUrl).toEqual(url)
-    expect((client as any).interceptors).toBeDefined()
+    expect((client as any).configuration.interceptors).toBeDefined()
   })
 })

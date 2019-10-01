@@ -1,5 +1,6 @@
 import nock from 'nock'
 import moment from 'moment'
+import request from 'request'
 import { HttpClientBuilder, HttpClientInterceptors, HttpClientRetryStrategy } from '../src'
 
 describe('HttpClientResponse', () => {
@@ -142,7 +143,7 @@ describe('HttpClientResponse', () => {
       })
   })
 
-  it('should apply the reqyest interceptor', async () => {
+  it('should apply the request interceptor', async () => {
     const interceptors = HttpClientInterceptors.create()
       .useRequestInterceptor(client => client.path('users', '200'))
       .useResponseInterceptor((response: any) => response.return)
@@ -150,6 +151,21 @@ describe('HttpClientResponse', () => {
     const response = await HttpClientBuilder.create('http://api.github.com')
       .useInterceptors(interceptors)
       .client()
+      .get()
+      .getResponse<any>()
+
+    expect(response.name).toEqual('Bruno Mayer')
+  })
+
+  it('should return when using request service', async () => {
+    const interceptor = HttpClientInterceptors.create()
+      .useResponseInterceptor((response: any) => JSON.parse(response).return)
+
+    const response = await HttpClientBuilder.create('http://api.github.com')
+      .useRequest(request)
+      .useInterceptors(interceptor)
+      .client()
+      .path('users', '200')
       .get()
       .getResponse<any>()
 

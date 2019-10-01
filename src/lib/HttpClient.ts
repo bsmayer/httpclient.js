@@ -1,28 +1,24 @@
-import { Method } from 'axios'
-
 import AuthorizationType from './constants/AuthorizationType'
 import HttpClientResponse from './HttpClientResponse'
-import HttpClientInterceptors from './HttpClientInterceptors'
 import HttpClientRetryStrategy from './HttpClientRetryStrategy'
+import HttpClientConfiguration from './HttpClientConfiguration'
+import HttpMethod from './constants/HttpMethod'
 
 export default class HttpClient {
   private baseUrl: string;
   private paths!: string[];
   private params: any;
-  private method!: Method;
+  private method!: HttpMethod;
   private body: any;
   private headers: any;
-  private interceptors: HttpClientInterceptors;
-  private retryConfig: HttpClientRetryStrategy;
+  private configuration: HttpClientConfiguration;
 
   constructor (
     baseUrl: string,
-    interceptors: HttpClientInterceptors,
-    retryConfig: HttpClientRetryStrategy
+    configuration: HttpClientConfiguration
   ) {
     this.baseUrl = baseUrl
-    this.interceptors = interceptors
-    this.retryConfig = retryConfig
+    this.configuration = configuration
   }
 
   public path (...paths: string[]): HttpClient {
@@ -64,10 +60,10 @@ export default class HttpClient {
   }
 
   public retry (attempt: number, interval: number): HttpClient {
-    if (!this.retryConfig)
-      this.retryConfig = HttpClientRetryStrategy.create()
+    if (!this.configuration.retry)
+      this.configuration.setRetryStrategy(HttpClientRetryStrategy.create())
 
-    this.retryConfig
+    this.configuration.retry
       .attempt(attempt)
       .interval(interval)
 
@@ -75,49 +71,49 @@ export default class HttpClient {
   }
 
   public retryOnHttpStatusCodes (...codes: number[]): HttpClient {
-    if (!this.retryConfig)
-      this.retryConfig = HttpClientRetryStrategy.create()
+    if (!this.configuration.retry)
+      this.configuration.setRetryStrategy(HttpClientRetryStrategy.create())
 
-    this.retryConfig.forHttpStatusCodes(...codes)
+    this.configuration.retry.forHttpStatusCodes(...codes)
     return this
   }
 
   public retryWhen (validationFn: (statusCode: number) => boolean): HttpClient {
-    if (!this.retryConfig)
-      this.retryConfig = HttpClientRetryStrategy.create()
+    if (!this.configuration.retry)
+      this.configuration.setRetryStrategy(HttpClientRetryStrategy.create())
 
-    this.retryConfig.shouldRetryWhen(validationFn)
+    this.configuration.retry.shouldRetryWhen(validationFn)
     return this
   }
 
   public get (): HttpClientResponse {
-    this.method = 'get'
+    this.method = HttpMethod.GET
     return this.createHttpClientResponse()
   }
 
   public post (): HttpClientResponse {
-    this.method = 'post'
+    this.method = HttpMethod.POST
     return this.createHttpClientResponse()
   }
 
   public put (): HttpClientResponse {
-    this.method = 'put'
+    this.method = HttpMethod.PUT
     return this.createHttpClientResponse()
   }
 
   public patch (): HttpClientResponse {
-    this.method = 'patch'
+    this.method = HttpMethod.PATCH
     return this.createHttpClientResponse()
   }
 
   public delete (): HttpClientResponse {
-    this.method = 'delete'
+    this.method = HttpMethod.DELETE
     return this.createHttpClientResponse()
   }
 
   private createHttpClientResponse (): HttpClientResponse {
-    if (this.interceptors)
-      this.interceptors.applyRequestInterceptor(this)
+    if (this.configuration.interceptors)
+      this.configuration.interceptors.applyRequestInterceptor(this)
 
     return new HttpClientResponse(
       this.baseUrl,
@@ -126,8 +122,7 @@ export default class HttpClient {
       this.method,
       this.body,
       this.headers,
-      this.interceptors,
-      this.retryConfig
+      this.configuration
     )
   }
 }

@@ -19,7 +19,7 @@
 
 [![npm version](https://badge.fury.io/js/httpclient.js.svg)](https://badge.fury.io/js/httpclient.js)
 
-Friendly wrapper to use with your favorite rest client in your Javascript projects. Through intuitive builders, you can make your requests looking much more readable, isolating your configuration and creating robust api calls without having to concern about the library you're using. 
+Friendly wrapper to use with your favorite rest client in your Javascript projects. Through intuitive builders, you can make your requests looking much more readable, isolating your configuration and creating robust api calls without having to worry about the library you're using. 
 
 Because we :heart: __axios__, this library is shipped with it already, but you're free to use your own instance of any of our supported clients.
 
@@ -166,7 +166,7 @@ this.api.client()
   .header('x-username', 'john_doe')
 ```
 
-### ___.authorization(type, value)__
+### __.authorization(type, value)__
 
 Sets a new Authorization header to your request. It receives a type (Basic, Bearer, etc) and a value.
 
@@ -213,7 +213,7 @@ this.api.client()
   .retryOnHttpStatusCodes(500, 501, 502, 503)
 ```
 
-### __.retryWhen(status_code => {})
+### __.retryWhen(status_code => {})__
 
 Similar to `.retryOnHttpStatusCodes`, but with `.retryWhen` you can pass a function which receives the status code and determine if we need to retry or not. 
 
@@ -224,186 +224,183 @@ this.api.client()
 
 ### __.get()__
 
-Fires a HTTP GET
+Sets HTTP GET to the request.
 
 ### __.post()__
 
-Fires a HTTP POST
+Sets HTTP POST to the request.
 
 ### __.put()__
 
-Fires a HTTP PUT
+Sets HTTP PUT to the request.
 
 ### __.patch()__
 
-Fires a HTTP PATCH
+Sets HTTP PATCH to the request.
 
 ### __.delete()__
 
-Fires a HTTP DELETE
+Sets HTTP DELETE to the request.
 
 ### __.getResponse()__
 
+This is the last method enabled in the builder. Once you call it, your request will be fired and the magic will start to happen. 
 
-
-## Usage
-
-This library supports pure NodeJS and Typescript. 
-
-Below is a simple example using NodeJS modules.
-
-```javascript
-const { HttpClientBuilder } = require('httpclient.js');
-
-const builder = HttpClientBuilder.create(process.env.BASE_URL);
-
-async function fetch(userId) {
-  return await builder
-    .client()
-    .path('path1', 'path2', 'path3')
-    .query('sortby', 'name')
-    .header('foo', 'bar')
-    .get()
-    .getResponse();
-}
-```
-
-And here's a simple example using Typescript.
-
-```typescript
-import { HttpClientBuilder } from 'httpclient.js';
-
-export default class YourService {
-  constructor() {
-    this.builder = HttpClientBuilder.create(process.env.BASE_URL);
-  }
-
-  public async fetch(userId: string): Promise<User> {
-    return await this.builder
-      .client()
-      .path('users', userId)
-      .get()
-      .getResponse<User>();
-  }
-}
-```
-
-We strongly recommend the use of this library with Typescript, using generics to make your calls even more readable. 
-
-## HttpClient builders
-
-When using the method __.client()__ from __HttpClientBuilder__, you're retrieving a new instance of your HttpClient. From now on, building your query should be really simple, using the following builders:
-
-| Builder | Description |
-| ------- | ----------- |
-| .path(...args) | Those are the paths that will make up your base URL. Each path you put here will be translated to __/path1/path2/path3__|
-| .header(name, value) | Will send a header with the provided name to the endpoint|
-| .query(name, value) | Will add a querystring to the URL. Each query will be translated to __?name=value__|
-| .payload(obj) | Will send the provided object to the endpoint|
-| .authorization(type, value) | Will create an Authorization header with provided type and value |
-| .basicAuthorization(user, password) | Will create a Basic Authorization header, converting the string __user:password__ to Base64 |
-| .bearerAuthorization(token) | Will create a Bearer Authorization header with provided token |
-| .retry(attempt, interval) | Will enable Retry Strategy to this request only in case it wasn't enabled on HttpClientBuilder and also override the retry strategy of the builder, setting the number of attempts you want to retry and the inverval between them. You can check more about retry strategies below. Similar to HttpClientRetryStrategy.attempt().interval() |
-| .retryOnHttpStatusCodes(...codes) | Will enable Retry Strategy to this request only, setting the HTTP Status Codes that need to considered to fire the Retry Strategy. Similar to HttpClientRetryStrategy.forHttpStatusCodes() |
-| .retryWhen((statusCode) => {}) | Will enable Retry Strategy to this request only, setting a retry validation function that will be used to check whether we need to retry or not. Similar to HttpClientRetryStrategy.shouldRetryWhen() |
-| .get() | Use HTTP GET |
-| .post() | Use HTTP POST |
-| .put() | Use HTTP PUT |
-| .delete() | Use HTTP DELETE |
-| .patch() | Use HTTP PATCH |
-| .getResponse\<YourType>() | Fires your HTTP request and already converts the result to the provided type. Will return __any__ or a simple object if type was not provided|
+If you're using Typescript, you can specify your return type using `.getResponse<YourType>()`.
 
 # Interceptors
 
-Interceptors allows you to inject data in your request, or handle your response and error before returning to your method. This is useful when you have a default api response wrapper, or when you want to grab a specific error code. 
+Interceptors are used like middlewares between the steps of the request. setting up interceptors is made by using `HttpClientInterceptors` class. This class has its own builder, making it possible to set up interceptors in a way as natural as making requests.
 
-Creating an interceptor is as simple as creating a new client. By just using the **HttpClientInterceptors** builder, you can create and configure your interceptors in a very intuitive way. 
+## They are mostly useful when:
+- You want to inject a header or any default setting before firing the request.
+- You have a default response wrapper returning from your APIs and you want to grab a property from that.
+- You want to change your response before returning to the method.
+- You want to grab an error and do something about it.
+- You simply want to log or track your requests
 
-Right now, you can inject the following interceptors: __useRequestInterceptor__, __useResponseInterceptor__ and __useErrorInterceptor__.
+#
 
-Below is how you can create and configure your own global interceptors. 
+## 3. `HttpClientInterceptors`
 
-```typescript
-import { AxiosError } from 'axios';
+### __.create()__
 
-import { 
-  HttpClientInterceptors, 
-  HttpClientBuilder, 
-  HttpClient 
-} from 'httpclient.js';
+Retrieves a new instance of `HttpClientInterceptors`.
 
-const interceptors = HttpClientInterceptors.create()
-  .useRequestInterceptor((client: HttpClient) => {})
-  .useResponseInterceptor<YourWrapper>((response: YourWrapper) => {})
-  .useErrorInterceptor((err: AxiosError) => {});
+### __.useRequestInterceptor((http_client) => {})__
 
-const builder = HttpClientBuilder
-  .create(process.env.BASE_URL)
-  .useInterceptors(interceptors);
+This interceptor is called right before firing the request. This is your last opportunity to change something in your request. It receives the current `HttpClient` as a parameter.
 
-export default builder;
+```ts
+HttpClientInterceptors.create()
+  .useRequestInterceptor((client: HttpClient) => {
+    client.header('role', 'read_only')
+  })
 ```
 
-```typescript
-import builder from './default-builder';
+### __.useResponseInterceptor((response_body, original_client_response) => {})__
 
-export default class YourService {
-  public async create(user: User): Promise<User> {
-    return await builder
-      .client()
-      .path('users')
-      .payload(user)
-      .post()
-      .getResponse<User>();
-  }
+This interceptor is called after receiving a successful response from the API. It receives the response body and optionally the full original response from the configured client. Any changes you make on it, will be applied before returning to your method. 
+
+If you're using this interceptor with Typescript, you can provide your response type by calling `.useResponseInterceptor<YourResponseType>((response: YourResponseType) => {})`.
+
+So let's suppose we have a default API response wrapper with the following structure:
+
+```ts
+interface ApiResponse<T> {
+  return: T;
+  error: string;
+  success: boolean;
 }
+```
+
+With the response interceptor you could easily grab your response like this.
+
+```ts
+HttpClientInterceptors.create()
+  .useResponseInterceptor<ApiResponse<any>>(response => response.return)
+```
+
+### __.useErrorInterceptor((error) => {})__
+
+This method receives as a parameter the full error from your chosen client. 
+If you're using it with Typescript, you can specify the error type according to your rest client, by calling `.useErrorInterceptor<AxiosError>((error: AxiosError) => {})`. Since we use __axios__, by default an instance of __AxiosError__ is passed. 
+
+__Important:__ If you return something from this method, we're also going to consider the error as resolved. It means that we're already catching the error for you. But instead, if you don't return anything from it, we will execute the method and throw the original exception.
+
+For instance, the code below would not throw an Error when the status code is `404`. For the other status codes it would just log the problem and throw the original error. 
+
+```ts
+HttpClientInterceptors.create()
+  .useErrorInterceptor<AxiosError>((error: AxiosError) => {
+    Logger.log('Something wrong happened!', error.message)
+
+    if (error.response.status === 404) {
+      return { redirect_to: '/Home' }
+    }
+  })
+```
+
+## __Full usage example__
+
+```ts
+import { HttpClientInterceptors, HttpClientBuilder } from 'httpclient.js'
+
+const interceptors = HttpClientInterceptors.create()
+  .useRequestInterceptor(client => client.header('x-role', 'admin'))
+  .useResponseInterceptor<ApiResponse<any>>(response => response.return)
+  .useErrorInterceptor<AxiosError>(err => Logger.error(err.message))
+
+const builder = HttpClientBuilder.create()
+  .useInterceptors(interceptors)
+
+export default builder
 ```
 
 # Retry Strategy
 
-This library is prepared to handle HTTP failures and automatically retry according to your rules. Setting up a Retry Strategy is easy, and you just need the help of __HttpClientRetryStrategy__ class. See the example below:
+When working with APIs, having resilience in your requests is really important. We don't always know when an endpoint is over its limits or down, but we still rely on that information. There are many resilience concepts, and a common one is the __retry strategy__, and you can set up your own retry strategy by using `HttpClientRetryStrategy` class. 
 
-```typescript
-import { HttpClientBuilder, HttpClientRetryStrategy } from 'httpclient.js';
+#
 
-const retry = HttpClientRetryStrategy.create()
-  .attempt(3) // how many attempts that we will retry before throwing an error
-  .interval(1000); // interval between them
+## 4. `HttpClientRetryStrategy`
 
-const builder = HttpClientBuilder.create(process.env.BASE_URL)
-  .useRetryStrategy(retry);
+### __.create()__
 
-export default builder;
+Retrieves a new instance of `HttpClientRetryStrategy` class.
+
+### __.attempt(max_attempts)__
+
+Sets the maximum number of attempts that you want to retry the request before returning an error. __The default value is 3__.
+
+### __.interval(interval_in_ms)__
+
+Sets the interval between your requests in milliseconds.
+
+If you're using exponential rule (enabled by default), the interval will be the result of: __2 ^ current_attempt * interval__. For instance, let's suppose you set up your retry rule for a max number of 3 attempts with 1000 ms, the wait would be:
+
+- (2 ^ 1) * 1000 = 2000 ms = 2 seconds
+- (2 ^ 2) * 1000 = 4000 ms = 4 seconds
+- (2 ^ 3) * 1000 = 8000 ms = 8 seconds
+
+In case of a non-exponential rule, the interval will be equally respected between all attempts.
+
+### __.forHttpStatusCodes(...codes)__
+
+Sets the HTTP status code that you want to consider retrying. 
+
+```ts
+HttpClientRetryStrategy.create()
+  .forHttpStatusCodes(500, 503, 504)
 ```
-The above code is creating a retry strategy for all errors in your application. It will try to fire your request for 3 times, using an interval of 1000 ms. By default, the interval uses an exponential rule - interval ^ current attempt - but you can disable that with the use of __.useExponentialStrategy(false)__. 
 
-Also, you're able to determine what are the status codes that you want to retry. Check the example below:
+### __.shouldRetryWhen((status_code) => {})__
 
-```typescript
-const retry = HttpClientRetryStrategy.create()
-  .forHttpStatusCodes(404, 500)
-  .attempt(3)
-  .interval(2000)
-  .useExponentialStrategy(false);
+Similar to `.forHttpStatusCodes()`, but instead of passing all the status codes manually, you provide a validation function that returns a boolean. In case of `true`, it will retry. 
+
+```ts
+HttpClientRetryStrategy.create()
+  .shouldRetryWhen(statusCode => statusCode >= 500 || statusCode === 404)
 ```
 
-And if you're not sure about what status codes you need to validate, you can use the builder __.shouldRetryWhen(statusCode => {})__. 
+### __.useExponentialStrategy(true|false)__
 
-```typescript
-const retry = HttpClientRetryStrategy.create()
-  .shouldRetryWhen((statusCode: number) => statusCode >= 500 || statusCode === 404)
-  .attempt(3)
-  .interval(1000);
+Indicates if it should use the exponential rule for the next attempts. __Default: true__.
+
+```ts
+HttpClientRetryStrategy.create()
+  .useExponentialStrategy(false)
 ```
 
-As you can see, setting up resiliant rules is pretty simple
+# Try out yourself
 
-# Real world examples
+This library makes possible the separation between configuration and requests, but each case is a different case and only you know the best way to use it within your scenario. 
 
-We are preparing an examples folder with real world scenarios, but while it's not done, you can follow the code below to understand how easy and clean your requests can be.
+However, the code below is a full example of how you can use this library.
 
-> config/api.ts
-```typescript
+## config/api.js
+
+```ts
 import { 
   HttpClientBuilder, 
   HttpClientInterceptors, 
@@ -412,7 +409,8 @@ import {
 
 // Setting up interceptors
 const interceptors = HttpClientInterceptors.create()
-  .useResponseInterceptor<ApiWrapper<any>>((response: ApiWrapper<any>) => response.return);
+  .useResponseInterceptor<ApiResponse<any>>((response: ApiWrapper<any>) => response.return)
+  .useErrorInterceptor(err => console.log(err.message))
 
 // Setting up the retry strategy
 const retry = HttpClientRetryStrategy.create()
@@ -429,7 +427,8 @@ const builder = HttpClientBuilder.create('https://api.github.com')
 export default builder;
 ```
 
-> services/users.ts
+## services/user.ts
+
 ```typescript
 import api from '../config/api';
 
@@ -452,9 +451,9 @@ export default class UserService {
 
 # Contribute
 
-If you like this library and idea, you can help us implementing new features and finding bugs. Feel free to send a PR and open issues releated to your problem. 
+If you like this library and idea, you can help us implementing new features and finding bugs (or at least give us a star). Feel free to send a PR and open new issues. 
 
-Special thanks to **@wesleyegberto** who created a version of this library for .NET Core.
+Special thanks to __@wesleyegberto__ who created a version of this library for .NET Core.
 
 Github: https://github.com/wesleyegberto
 

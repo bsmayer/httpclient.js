@@ -1,10 +1,9 @@
 import HttpClient from './HttpClient'
-import { AxiosError } from 'axios'
 
 export default class HttpClientInterceptors {
   private requestInterceptor!: (client: HttpClient) => any;
   private responseInterceptor!: (response: any) => any;
-  private errorInterceptor!: (error: AxiosError) => any;
+  private errorInterceptor!: (error: any) => any;
 
   public static create (): HttpClientInterceptors {
     return new HttpClientInterceptors()
@@ -20,7 +19,7 @@ export default class HttpClientInterceptors {
     return this
   }
 
-  public useErrorInterceptor (fn: (error: AxiosError) => any): HttpClientInterceptors {
+  public useErrorInterceptor (fn: (error: any) => any): HttpClientInterceptors {
     this.errorInterceptor = fn
     return this
   }
@@ -37,7 +36,7 @@ export default class HttpClientInterceptors {
     }
   }
 
-  public applyErrorInterceptor (error: AxiosError): any {
+  public applyErrorInterceptor (error: any): any {
     if (this.errorInterceptor) {
       return this.errorInterceptor(error)
     }
