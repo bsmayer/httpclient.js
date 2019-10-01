@@ -1,6 +1,7 @@
 import HttpClientConfiguration from './HttpClientConfiguration'
 import AxiosService from './rest-clients/AxiosService'
 import RequestService from './rest-clients/RequestService'
+import GotService from './rest-clients/GotService'
 import HttpMethod from './constants/HttpMethod'
 
 export default class HttpClientResponse {
@@ -66,6 +67,12 @@ export default class HttpClientResponse {
         responseBody = originalResponse.data
       } else if (this.configuration.isRequest()) {
         originalResponse = await RequestService
+          .create(this.configuration.client)
+          .makeRequest(request)
+
+        responseBody = originalResponse.body
+      } else if (this.configuration.isGot()) {
+        originalResponse = await GotService
           .create(this.configuration.client)
           .makeRequest(request)
 

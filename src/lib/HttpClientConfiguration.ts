@@ -38,4 +38,8 @@ export default class HttpClientConfiguration {
   public isRequest (): boolean {
     return this.restClientType === RestClient.REQUEST
   }
+
+  public isGot (): boolean {
+    return this.restClientType === RestClient.GOT
+  }
 }
