@@ -1,7 +1,7 @@
 import { RequestAPI, Request, CoreOptions, RequiredUriUrl, Response } from 'request'
 
-import RequestSchema from '../models/RequestSchema'
-import ErrorSchema from '../models/ErrorSchema'
+import RequestSchema from '../schemas/RequestSchema'
+import ErrorSchema from '../schemas/ErrorSchema'
 
 export default class RequestService {
   private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>;

@@ -1,7 +1,7 @@
 import HttpClientConfiguration from './HttpClientConfiguration'
-import AxiosService from './rest-clients/AxiosService'
-import RequestService from './rest-clients/RequestService'
-import GotService from './rest-clients/GotService'
+import AxiosService from './services/AxiosService'
+import RequestService from './services/RequestService'
+import GotService from './services/GotService'
 import HttpMethod from './constants/HttpMethod'
 
 export default class HttpClientResponse {

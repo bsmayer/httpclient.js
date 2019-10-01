@@ -1,7 +1,7 @@
 import { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 
-import RequestSchema from '../models/RequestSchema'
-import ErrorSchema from '../models/ErrorSchema'
+import RequestSchema from '../schemas/RequestSchema'
+import ErrorSchema from '../schemas/ErrorSchema'
 
 export default class AxiosService {
   private axios: AxiosStatic;
