@@ -159,32 +159,24 @@ describe('HttpClientResponse', () => {
   })
 
   it('should return when using request service', async () => {
-    const interceptor = HttpClientInterceptors.create()
-      .useResponseInterceptor((response: any) => JSON.parse(response).return)
-
     const response = await HttpClientBuilder.create('http://api.github.com')
       .useRequest(request)
-      .useInterceptors(interceptor)
       .client()
       .path('users', '200')
       .get()
       .getResponse<any>()
 
-    expect(response.name).toEqual('Bruno Mayer')
+    expect(response.return.name).toEqual('Bruno Mayer')
   })
 
   it('should return when using request service', async () => {
-    const interceptor = HttpClientInterceptors.create()
-      .useResponseInterceptor((response: any) => JSON.parse(response).return)
-
     const response = await HttpClientBuilder.create('http://api.github.com')
       .useGot(got)
-      .useInterceptors(interceptor)
       .client()
       .path('users', '200')
       .get()
       .getResponse<any>()
 
-    expect(response.name).toEqual('Bruno Mayer')
+    expect(response.return.name).toEqual('Bruno Mayer')
   })
 })

@@ -104,6 +104,18 @@ Before you start composing your request, you need to create a new instance of `H
 
 Create a new instance of `HttpClientBuilder`, passing the base URL of your api. This will enable the other configuration options. 
 
+### __.useAxios(axios)__
+
+This method allows the use of your own instance of __axios__. However, it doesn't mean that you need to. This library ships with axios by default, however we understand that you're probably want to be in control of it.
+
+### __.useRequest(request)__
+
+This method allows the use of your own instance of __request__ (https://github.com/request/request). Setting this method will make your requests to be fired using request instead of axios.
+
+### __.useGot(got)__
+
+This method allows the use of your own instance of __got__ (github.com/sindresorhus/got). Setting this method will make your requests to be fired using got instead of axios.
+
 ### __.useInterceptors(interceptors)__
 
 By using this method you're able to inject your interceptors as middlewares. Interceptors are instance of `HttpClientInterceptors` and you can read more about them below. This library does not ship with default interceptors.

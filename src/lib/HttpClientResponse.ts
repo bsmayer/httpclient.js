@@ -70,13 +70,13 @@ export default class HttpClientResponse {
           .create(this.configuration.client)
           .makeRequest(request)
 
-        responseBody = originalResponse.body
+        responseBody = JSON.parse(originalResponse.body)
       } else if (this.configuration.isGot()) {
         originalResponse = await GotService
           .create(this.configuration.client)
           .makeRequest(request)
 
-        responseBody = originalResponse.body
+        responseBody = JSON.parse(originalResponse.body)
       }
 
       if (this.configuration.interceptors) {
