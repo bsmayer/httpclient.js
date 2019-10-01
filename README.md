@@ -108,13 +108,34 @@ Create a new instance of `HttpClientBuilder`, passing the base URL of your api. 
 
 This method allows the use of your own instance of __axios__. However, it doesn't mean that you need to. This library ships with axios by default, however we understand that you're probably want to be in control of it.
 
+```ts
+import axios from 'axios'
+
+HttpClientBuilder.create()
+  .useAxios(axios)
+```
+
 ### __.useRequest(request)__
 
 This method allows the use of your own instance of __request__ (https://github.com/request/request). Setting this method will make your requests to be fired using request instead of axios.
 
+```ts
+import request from 'request'
+
+HttpClientBuilder.create()
+  .useRequest(request)
+```
+
 ### __.useGot(got)__
 
 This method allows the use of your own instance of __got__ (github.com/sindresorhus/got). Setting this method will make your requests to be fired using got instead of axios.
+
+```ts
+import got from 'gpt'
+
+HttpClientBuilder.create()
+  .useGot(got)
+```
 
 ### __.useInterceptors(interceptors)__
 
@@ -315,8 +336,7 @@ HttpClientInterceptors.create()
 
 ### __.useErrorInterceptor((error) => {})__
 
-This method receives as a parameter the full error from your chosen client. 
-If you're using it with Typescript, you can specify the error type according to your rest client, by calling `.useErrorInterceptor<AxiosError>((error: AxiosError) => {})`. Since we use __axios__, by default an instance of __AxiosError__ is passed. 
+This method receives as a parameter the full error from your chosen client. Since we use __axios__, by default an instance of __AxiosError__ is passed. 
 
 __Important:__ If you return something from this method, we're also going to consider the error as resolved. It means that we're already catching the error for you. But instead, if you don't return anything from it, we will execute the method and throw the original exception.
 

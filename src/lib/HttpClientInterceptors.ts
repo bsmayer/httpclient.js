@@ -2,7 +2,7 @@ import HttpClient from './HttpClient'
 
 export default class HttpClientInterceptors {
   private requestInterceptor!: (client: HttpClient) => any;
-  private responseInterceptor!: (response: any) => any;
+  private responseInterceptor!: (responseBody: any, originalClientResponse: any) => any;
   private errorInterceptor!: (error: any) => any;
 
   public static create (): HttpClientInterceptors {
@@ -30,9 +30,9 @@ export default class HttpClientInterceptors {
     }
   }
 
-  public applyResponseInterceptor<T> (response: T): any {
+  public applyResponseInterceptor<T> (responseBody: T, originalClientResponse: any): any {
     if (this.responseInterceptor) {
-      return this.responseInterceptor(response)
+      return this.responseInterceptor(responseBody, originalClientResponse)
     }
   }
 

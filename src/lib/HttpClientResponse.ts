@@ -80,7 +80,7 @@ export default class HttpClientResponse {
       }
 
       if (this.configuration.interceptors) {
-        const resolvedResponse = this.configuration.interceptors.applyResponseInterceptor(responseBody)
+        const resolvedResponse = this.configuration.interceptors.applyResponseInterceptor(responseBody, originalResponse)
         if (resolvedResponse)
           return resolvedResponse as T
       }
