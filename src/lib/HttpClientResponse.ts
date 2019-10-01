@@ -45,6 +45,15 @@ export default class HttpClientResponse {
       return path + '/' + curr
     }, '')
 
+    const request = {
+      baseUrl: this.baseUrl,
+      paths: finalPath,
+      method: this.method,
+      payload: this.body,
+      headers: this.headers,
+      params: this.params
+    }
+
     return this.fetchRetry<T>(async (): Promise<T> => {
       let responseBody
       let originalResponse
@@ -52,27 +61,13 @@ export default class HttpClientResponse {
       if (this.configuration.isAxios()) {
         originalResponse = await AxiosService
           .create(this.configuration.client)
-          .makeRequest({
-            baseUrl: this.baseUrl,
-            paths: finalPath,
-            method: this.method,
-            payload: this.body,
-            headers: this.headers,
-            params: this.params
-          })
+          .makeRequest(request)
 
         responseBody = originalResponse.data
       } else if (this.configuration.isRequest()) {
         originalResponse = await RequestService
           .create(this.configuration.client)
-          .makeRequest({
-            baseUrl: this.baseUrl,
-            paths: finalPath,
-            method: this.method,
-            payload: this.body,
-            headers: this.headers,
-            params: this.params
-          })
+          .makeRequest(request)
 
         responseBody = originalResponse.body
       }
@@ -86,12 +81,12 @@ export default class HttpClientResponse {
       return responseBody as T
     }).catch(err => {
       if (this.configuration.interceptors) {
-        const resolvedError = this.configuration.interceptors.applyErrorInterceptor(err)
+        const resolvedError = this.configuration.interceptors.applyErrorInterceptor(err.originalError || err)
         if (resolvedError)
           return resolvedError
       }
 
-      throw err
+      throw err.originalError || err
     })
   }
 
@@ -106,8 +101,8 @@ export default class HttpClientResponse {
           if (attempt >= this.configuration.retry.getAttempts())
             return reject(err)
 
-          if (err.response && err.response.status && !this.configuration.retry.checkIfShouldRetry(err.response.status))
-            return reject(err)
+          if (err.statusCode && !this.configuration.retry.checkIfShouldRetry(err.statusCode))
+            return reject(err.originalError)
 
           const interval = this.configuration.retry.isExponential()
             ? (2 ^ attempt) * this.configuration.retry.getInterval()

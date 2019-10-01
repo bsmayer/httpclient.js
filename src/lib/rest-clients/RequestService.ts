@@ -1,6 +1,7 @@
 import { RequestAPI, Request, CoreOptions, RequiredUriUrl, Response } from 'request'
 
 import RequestSchema from '../models/RequestSchema'
+import ErrorSchema from '../models/ErrorSchema'
 
 export default class RequestService {
   private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>;
@@ -25,7 +26,7 @@ export default class RequestService {
         },
         (err, response) => {
           if (err)
-            return reject(err)
+            return reject(ErrorSchema.of(err, response.statusCode))
           return resolve(response)
         }
       )

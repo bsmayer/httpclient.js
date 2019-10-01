@@ -1,6 +1,7 @@
-import { AxiosStatic, AxiosResponse } from 'axios'
+import { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
 
 import RequestSchema from '../models/RequestSchema'
+import ErrorSchema from '../models/ErrorSchema'
 
 export default class AxiosService {
   private axios: AxiosStatic;
@@ -14,13 +15,20 @@ export default class AxiosService {
   }
 
   public makeRequest (schema: RequestSchema): Promise<AxiosResponse> {
-    return this.axios({
-      method: schema.method,
-      baseURL: schema.baseUrl,
-      url: schema.paths,
-      data: schema.payload,
-      params: schema.params,
-      headers: schema.headers
+    return new Promise((resolve, reject): void => {
+      this.axios({
+        method: schema.method,
+        baseURL: schema.baseUrl,
+        url: schema.paths,
+        data: schema.payload,
+        params: schema.params,
+        headers: schema.headers
+      })
+        .then(response => resolve(response))
+        .catch((err: AxiosError) => {
+          const statusCode = (err.response && err.response.status && err.response.status) || 0
+          return reject(ErrorSchema.of(err, statusCode))
+        })
     })
   }
 }
