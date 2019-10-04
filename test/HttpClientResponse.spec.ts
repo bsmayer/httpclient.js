@@ -1,5 +1,7 @@
 import nock from 'nock'
 import moment from 'moment'
+import request from 'request'
+import got from 'got'
 import { HttpClientBuilder, HttpClientInterceptors, HttpClientRetryStrategy } from '../src'
 
 describe('HttpClientResponse', () => {
@@ -142,7 +144,7 @@ describe('HttpClientResponse', () => {
       })
   })
 
-  it('should apply the reqyest interceptor', async () => {
+  it('should apply the request interceptor', async () => {
     const interceptors = HttpClientInterceptors.create()
       .useRequestInterceptor(client => client.path('users', '200'))
       .useResponseInterceptor((response: any) => response.return)
@@ -154,5 +156,27 @@ describe('HttpClientResponse', () => {
       .getResponse<any>()
 
     expect(response.name).toEqual('Bruno Mayer')
+  })
+
+  it('should return when using request service', async () => {
+    const response = await HttpClientBuilder.create('http://api.github.com')
+      .useRequest(request)
+      .client()
+      .path('users', '200')
+      .get()
+      .getResponse<any>()
+
+    expect(response.return.name).toEqual('Bruno Mayer')
+  })
+
+  it('should return when using request service', async () => {
+    const response = await HttpClientBuilder.create('http://api.github.com')
+      .useGot(got)
+      .client()
+      .path('users', '200')
+      .get()
+      .getResponse<any>()
+
+    expect(response.return.name).toEqual('Bruno Mayer')
   })
 })
