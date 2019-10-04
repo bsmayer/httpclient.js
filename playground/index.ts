@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { HttpClientBuilder, HttpClientInterceptors, HttpClientRetryStrategy } from '../src'
 
 function test (username: string): Promise<any> {
@@ -11,6 +12,7 @@ function test (username: string): Promise<any> {
     .useExponentialStrategy()
 
   const builder = HttpClientBuilder.create('https://api.github.com')
+    .useAxios(axios)
     .useInterceptors(interceptors)
     .use(retry)
 
