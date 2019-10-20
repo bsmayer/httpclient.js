@@ -1,6 +1,7 @@
 import HttpClientConfiguration from './HttpClientConfiguration'
 import AxiosService from './services/AxiosService'
 import RequestService from './services/RequestService'
+import FetchService from './services/FetchService'
 import GotService from './services/GotService'
 import HttpMethod from './constants/HttpMethod'
 
@@ -76,6 +77,10 @@ export default class HttpClientResponse {
           .create(this.configuration.client)
           .makeRequest(request)
 
+        responseBody = JSON.parse(originalResponse.body)
+      } else {
+        originalResponse = await FetchService
+          .makeRequest(request)
         responseBody = JSON.parse(originalResponse.body)
       }
 

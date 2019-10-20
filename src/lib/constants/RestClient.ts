@@ -1,7 +1,8 @@
 enum RestClient {
   AXIOS = 'axios',
   REQUEST = 'request',
-  GOT = 'got'
+  GOT = 'got',
+  FETCH = 'fetch'
 }
 
 export default RestClient
