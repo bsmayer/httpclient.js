@@ -1,9 +1,9 @@
 export default class HttpClientRetryStrategy {
-  private attempts: number;
-  private msInterval: number;
-  private exponentialRetry: boolean;
-  private statusCodes: number[];
-  private statusCodeValidation!: (statusCode: number) => boolean;
+  private attempts: number
+  private msInterval: number
+  private exponentialRetry: boolean
+  private statusCodes: number[]
+  private statusCodeValidation!: (statusCode: number) => boolean
 
   constructor () {
     this.attempts = 3

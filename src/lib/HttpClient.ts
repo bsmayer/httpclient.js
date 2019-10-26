@@ -5,13 +5,13 @@ import HttpClientConfiguration from './HttpClientConfiguration'
 import HttpMethod from './constants/HttpMethod'
 
 export default class HttpClient {
-  private baseUrl: string;
-  private paths!: string[];
-  private params: any;
-  private method!: HttpMethod;
-  private body: any;
-  private headers: any;
-  private configuration: HttpClientConfiguration;
+  private baseUrl: string
+  private paths!: string[]
+  private params: any
+  private method!: HttpMethod
+  private body: any
+  private headers: any
+  private configuration: HttpClientConfiguration
 
   constructor (
     baseUrl: string,

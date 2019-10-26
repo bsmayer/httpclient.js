@@ -9,8 +9,8 @@ import HttpClientConfiguration from './HttpClientConfiguration'
 import RestClient from './constants/RestClient'
 
 export default class HttpClientBuilder {
-  private baseUrl: string;
-  private configuration: HttpClientConfiguration;
+  private baseUrl: string
+  private configuration: HttpClientConfiguration
 
   constructor (baseUrl: string) {
     this.baseUrl = baseUrl

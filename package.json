@@ -17,6 +17,7 @@
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "build": "tsc -p .",
+    "lint": "eslint ./src/**/*.ts",
     "test": "jest"
   },
   "dependencies": {
