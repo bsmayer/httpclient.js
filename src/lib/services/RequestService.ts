@@ -4,7 +4,7 @@ import RequestSchema from '../schemas/RequestSchema'
 import ErrorSchema from '../schemas/ErrorSchema'
 
 export default class RequestService {
-  private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>;
+  private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>
 
   constructor (request: RequestAPI<Request, CoreOptions, RequiredUriUrl>) {
     this.request = request
@@ -22,7 +22,7 @@ export default class RequestService {
           method: schema.method,
           headers: schema.headers,
           body: schema.payload,
-          qs: schema.params
+          qs: schema.params,
         },
         (err, response) => {
           if (err)

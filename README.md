@@ -131,7 +131,7 @@ HttpClientBuilder.create()
 This method allows the use of your own instance of __got__ (github.com/sindresorhus/got). Setting this method will make your requests to be fired using got instead of axios.
 
 ```ts
-import got from 'gpt'
+import got from 'got'
 
 HttpClientBuilder.create()
   .useGot(got)

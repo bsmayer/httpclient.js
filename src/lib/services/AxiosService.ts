@@ -4,7 +4,7 @@ import RequestSchema from '../schemas/RequestSchema'
 import ErrorSchema from '../schemas/ErrorSchema'
 
 export default class AxiosService {
-  private axios: AxiosStatic;
+  private axios: AxiosStatic
 
   constructor (axios: AxiosStatic) {
     this.axios = axios
@@ -22,7 +22,7 @@ export default class AxiosService {
         url: schema.paths,
         data: schema.payload,
         params: schema.params,
-        headers: schema.headers
+        headers: schema.headers,
       })
         .then(response => resolve(response))
         .catch((err: AxiosError) => {

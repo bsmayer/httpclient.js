@@ -9,8 +9,8 @@ import HttpClientConfiguration from './HttpClientConfiguration'
 import RestClient from './constants/RestClient'
 
 export default class HttpClientBuilder {
-  private baseUrl: string;
-  private configuration: HttpClientConfiguration;
+  private baseUrl: string
+  private configuration: HttpClientConfiguration
 
   constructor (baseUrl: string) {
     this.baseUrl = baseUrl
@@ -36,6 +36,11 @@ export default class HttpClientBuilder {
 
   public useGot (got: GotInstance): HttpClientBuilder {
     this.configuration.setRestClient(got, RestClient.GOT)
+    return this
+  }
+
+  public useFetch(): HttpClientBuilder {
+    this.configuration.setRestClient(null, RestClient.FETCH)
     return this
   }
 

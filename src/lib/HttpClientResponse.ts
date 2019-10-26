@@ -1,17 +1,18 @@
 import HttpClientConfiguration from './HttpClientConfiguration'
 import AxiosService from './services/AxiosService'
 import RequestService from './services/RequestService'
+import FetchService from './services/FetchService'
 import GotService from './services/GotService'
 import HttpMethod from './constants/HttpMethod'
 
 export default class HttpClientResponse {
-  private baseUrl: string;
-  private paths: string[];
-  private params: any;
-  private method: HttpMethod;
-  private body: any;
-  private headers: any;
-  private configuration: HttpClientConfiguration;
+  private baseUrl: string
+  private paths: string[]
+  private params: any
+  private method: HttpMethod
+  private body: any
+  private headers: any
+  private configuration: HttpClientConfiguration
 
   constructor (
     baseUrl: string,
@@ -52,7 +53,7 @@ export default class HttpClientResponse {
       method: this.method,
       payload: this.body,
       headers: this.headers,
-      params: this.params
+      params: this.params,
     }
 
     return this.fetchRetry<T>(async (): Promise<T> => {
@@ -76,6 +77,10 @@ export default class HttpClientResponse {
           .create(this.configuration.client)
           .makeRequest(request)
 
+        responseBody = JSON.parse(originalResponse.body)
+      } else {
+        originalResponse = await FetchService
+          .makeRequest(request)
         responseBody = JSON.parse(originalResponse.body)
       }
 
