@@ -5,10 +5,10 @@ import HttpClientRetryStrategy from './HttpClientRetryStrategy'
 import RestClient from './constants/RestClient'
 
 export default class HttpClientConfiguration {
-  public interceptors!: HttpClientInterceptors;
-  public retry!: HttpClientRetryStrategy;
-  public client: any;
-  public restClientType: RestClient;
+  public interceptors!: HttpClientInterceptors
+  public retry!: HttpClientRetryStrategy
+  public client: any
+  public restClientType: RestClient
 
   constructor () {
     this.restClientType = RestClient.AXIOS

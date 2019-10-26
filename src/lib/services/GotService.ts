@@ -22,7 +22,7 @@ export default class GotService {
         body: schema.payload,
         method: schema.method,
         path: schema.paths,
-        query: schema.params
+        query: schema.params,
       })
 
       instance(schema.baseUrl)

@@ -9,5 +9,5 @@ export {
   HttpClient,
   HttpClientResponse,
   HttpClientInterceptors,
-  HttpClientRetryStrategy
+  HttpClientRetryStrategy,
 }

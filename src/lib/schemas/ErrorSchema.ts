@@ -1,6 +1,6 @@
 export default class ErrorSchema {
-  public originalError: any;
-  public statusCode: number;
+  public originalError: any
+  public statusCode: number
 
   constructor (originalError: Error, statusCode: number) {
     this.originalError = originalError

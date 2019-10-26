@@ -22,7 +22,11 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
+    'curly': 0,
+    'semi': 0,
+    'comma-dangle': [2, 'always-multiline'],
     '@typescript-eslint/no-explicit-any': 0,
-    'curly': 0
+    '@typescript-eslint/quotes': [2, 'single'],
+    '@typescript-eslint/semi': [2, 'never']
   }
 }
