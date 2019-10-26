@@ -169,7 +169,7 @@ describe('HttpClientResponse', () => {
     expect(response.return.name).toEqual('Bruno Mayer')
   })
 
-  it('should return when using request service', async () => {
+  it('should return when using got service', async () => {
     const response = await HttpClientBuilder.create('http://api.github.com')
       .useGot(got)
       .client()
@@ -179,4 +179,26 @@ describe('HttpClientResponse', () => {
 
     expect(response.return.name).toEqual('Bruno Mayer')
   })
+})
+
+it('should return when using request service', async () => {
+  const response = await HttpClientBuilder.create('http://api.github.com')
+    .useRequest(request)
+    .client()
+    .path('users', '200')
+    .get()
+    .getResponse<any>()
+
+  expect(response.return.name).toEqual('Bruno Mayer')
+})
+
+it('should return when using fetch service', async () => {
+  const response = await HttpClientBuilder.create('http://api.github.com')
+    .useFetch()
+    .client()
+    .path('users', '200')
+    .get()
+    .getResponse<any>()
+
+  expect(response.return.name).toEqual('Bruno Mayer')
 })

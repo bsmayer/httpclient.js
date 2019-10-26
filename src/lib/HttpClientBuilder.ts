@@ -39,6 +39,11 @@ export default class HttpClientBuilder {
     return this
   }
 
+  public useFetch(): HttpClientBuilder {
+    this.configuration.setRestClient(null, RestClient.FETCH)
+    return this
+  }
+
   public useInterceptors (interceptors: HttpClientInterceptors): HttpClientBuilder {
     this.configuration.setInterceptors(interceptors)
     return this

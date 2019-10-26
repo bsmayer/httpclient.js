@@ -42,4 +42,8 @@ export default class HttpClientConfiguration {
   public isGot (): boolean {
     return this.restClientType === RestClient.GOT
   }
+
+  public isFetch (): boolean {
+    return this.restClientType === RestClient.FETCH
+  }
 }
