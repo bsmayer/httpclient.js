@@ -4,6 +4,7 @@ import RequestService from './services/RequestService';
 import FetchService from './services/FetchService';
 import GotService from './services/GotService';
 import HttpMethod from './constants/HttpMethod';
+import { runInThisContext } from 'vm';
 
 export default class HttpClientResponse {
   private baseUrl: string;
@@ -80,12 +81,17 @@ export default class HttpClientResponse {
           responseBody = JSON.parse(originalResponse.body);
         }
 
-        if (this.configuration.interceptors) {
+        if (this.configuration.interceptors && this.configuration.interceptors.hasResponseInterceptor()) {
           const resolvedResponse = this.configuration.interceptors.applyResponseInterceptor(
             responseBody,
             originalResponse
           );
-          if (resolvedResponse) return resolvedResponse as T;
+
+          if (resolvedResponse) {
+            return resolvedResponse as T;
+          } else {
+            return resolvedResponse;
+          }
         }
 
         return responseBody as T;
