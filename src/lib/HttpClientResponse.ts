@@ -100,6 +100,10 @@ export default class HttpClientResponse {
     });
   }
 
+  public async getMockedResponse<T>(mock: T): Promise<T> {
+    return Promise.resolve(mock);
+  }
+
   private fetchRetry<T>(request: () => Promise<T>, attempt = 1): Promise<T> {
     return new Promise<T>((resolve, reject): void => {
       request()
