@@ -1,10 +1,10 @@
-import HttpClientConfiguration from './HttpClientConfiguration';
+import { AxiosError } from 'axios';
 import AxiosService from './services/AxiosService';
-import RequestService from './services/RequestService';
 import FetchService from './services/FetchService';
 import GotService from './services/GotService';
+import HttpClientConfiguration from './HttpClientConfiguration';
 import HttpMethod from './constants/HttpMethod';
-import { runInThisContext } from 'vm';
+import RequestService from './services/RequestService';
 
 export default class HttpClientResponse {
   private baseUrl: string;
@@ -66,16 +66,16 @@ export default class HttpClientResponse {
 
         if (this.configuration.isAxios()) {
           originalResponse = await AxiosService.create(this.configuration.client).makeRequest(request);
-
           responseBody = originalResponse.data;
+        
         } else if (this.configuration.isRequest()) {
           originalResponse = await RequestService.create(this.configuration.client).makeRequest(request);
-
           responseBody = JSON.parse(originalResponse.body);
+        
         } else if (this.configuration.isGot()) {
           originalResponse = await GotService.create(this.configuration.client).makeRequest(request);
-
           responseBody = JSON.parse(originalResponse.body);
+        
         } else {
           originalResponse = await FetchService.makeRequest(request);
           responseBody = JSON.parse(originalResponse.body);

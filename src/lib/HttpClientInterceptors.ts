@@ -3,7 +3,7 @@ import HttpClient from './HttpClient';
 export default class HttpClientInterceptors {
   private requestInterceptor!: (client: HttpClient) => any;
   private responseInterceptor!: (responseBody: any, originalClientResponse: any) => any;
-  private errorInterceptor!: (error: any) => any;
+  private errorInterceptor!: (error: any, ) => any;
 
   public static create(): HttpClientInterceptors {
     return new HttpClientInterceptors();
