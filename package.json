@@ -1,7 +1,7 @@
 {
   "name": "httpclient.js",
   "repository": "https://github.com/bsmayer/httpclient.js",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "description": "Rest client made simple and intuitive",
   "keywords": [
     "rest",
