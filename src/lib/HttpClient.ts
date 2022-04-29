@@ -101,6 +101,17 @@ export default class HttpClient {
     return this.createHttpClientResponse();
   }
 
+  public getRequestInfo() {
+    return {
+      baseUrl: this.baseUrl,
+      paths: this.paths,
+      params: this.params,
+      method: this.method,
+      body: this.body,
+      headers: this.headers,
+    };
+  }
+
   private createHttpClientResponse(): HttpClientResponse {
     if (this.configuration.interceptors) this.configuration.interceptors.applyRequestInterceptor(this);
 
