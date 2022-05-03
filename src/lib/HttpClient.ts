@@ -102,13 +102,14 @@ export default class HttpClient {
   }
 
   public getRequestInfo() {
+    const obj = JSON.parse(JSON.stringify(this));
     return {
-      baseUrl: this.baseUrl,
-      paths: this.paths,
-      params: this.params,
-      method: this.method,
-      body: this.body,
-      headers: this.headers,
+      baseUrl: obj.baseUrl,
+      paths: obj.paths,
+      params: obj.params,
+      method: obj.method,
+      body: obj.body,
+      headers: obj.headers,
     };
   }
 
