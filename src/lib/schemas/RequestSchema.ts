@@ -1,4 +1,4 @@
-import HttpMethod from '../constants/HttpMethod'
+import HttpMethod from '../constants/HttpMethod';
 
 export default interface RequestSchema {
   method: HttpMethod;

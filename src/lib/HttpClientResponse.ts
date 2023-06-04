@@ -67,15 +67,12 @@ export default class HttpClientResponse {
         if (this.configuration.isAxios()) {
           originalResponse = await AxiosService.create(this.configuration.client).makeRequest(request);
           responseBody = originalResponse.data;
-        
         } else if (this.configuration.isRequest()) {
           originalResponse = await RequestService.create(this.configuration.client).makeRequest(request);
           responseBody = JSON.parse(originalResponse.body);
-        
         } else if (this.configuration.isGot()) {
           originalResponse = await GotService.create(this.configuration.client).makeRequest(request);
           responseBody = JSON.parse(originalResponse.body);
-        
         } else {
           originalResponse = await FetchService.makeRequest(request);
           responseBody = JSON.parse(originalResponse.body);

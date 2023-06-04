@@ -3,4 +3,4 @@ enum AuthorizationType {
   BEARER = 'Bearer',
 }
 
-export default AuthorizationType
+export default AuthorizationType;

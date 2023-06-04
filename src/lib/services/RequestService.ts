@@ -1,20 +1,20 @@
-import { RequestAPI, Request, CoreOptions, RequiredUriUrl, Response } from 'request'
+import { RequestAPI, Request, CoreOptions, RequiredUriUrl, Response } from 'request';
 
-import RequestSchema from '../schemas/RequestSchema'
-import ErrorSchema from '../schemas/ErrorSchema'
+import RequestSchema from '../schemas/RequestSchema';
+import ErrorSchema from '../schemas/ErrorSchema';
 
 export default class RequestService {
-  private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>
+  private request: RequestAPI<Request, CoreOptions, RequiredUriUrl>;
 
-  constructor (request: RequestAPI<Request, CoreOptions, RequiredUriUrl>) {
-    this.request = request
+  constructor(request: RequestAPI<Request, CoreOptions, RequiredUriUrl>) {
+    this.request = request;
   }
 
-  public static create (request: RequestAPI<Request, CoreOptions, RequiredUriUrl>): RequestService {
-    return new RequestService(request)
+  public static create(request: RequestAPI<Request, CoreOptions, RequiredUriUrl>): RequestService {
+    return new RequestService(request);
   }
 
-  public makeRequest (schema: RequestSchema): Promise<Response> {
+  public makeRequest(schema: RequestSchema): Promise<Response> {
     return new Promise((resolve, reject): void => {
       this.request(
         schema.baseUrl + schema.paths,
@@ -25,11 +25,10 @@ export default class RequestService {
           qs: schema.params,
         },
         (err, response) => {
-          if (err)
-            return reject(ErrorSchema.of(err, response.statusCode))
-          return resolve(response)
+          if (err) return reject(ErrorSchema.of(err, response.statusCode));
+          return resolve(response);
         }
-      )
-    })
+      );
+    });
   }
 }

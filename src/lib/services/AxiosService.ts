@@ -1,20 +1,20 @@
-import { AxiosStatic, AxiosResponse, AxiosError } from 'axios'
+import { AxiosStatic, AxiosResponse, AxiosError } from 'axios';
 
-import RequestSchema from '../schemas/RequestSchema'
-import ErrorSchema from '../schemas/ErrorSchema'
+import RequestSchema from '../schemas/RequestSchema';
+import ErrorSchema from '../schemas/ErrorSchema';
 
 export default class AxiosService {
-  private axios: AxiosStatic
+  private axios: AxiosStatic;
 
-  constructor (axios: AxiosStatic) {
-    this.axios = axios
+  constructor(axios: AxiosStatic) {
+    this.axios = axios;
   }
 
-  public static create (axios: AxiosStatic): AxiosService {
-    return new AxiosService(axios)
+  public static create(axios: AxiosStatic): AxiosService {
+    return new AxiosService(axios);
   }
 
-  public makeRequest (schema: RequestSchema): Promise<AxiosResponse> {
+  public makeRequest(schema: RequestSchema): Promise<AxiosResponse> {
     return new Promise((resolve, reject): void => {
       this.axios({
         method: schema.method,
@@ -26,9 +26,9 @@ export default class AxiosService {
       })
         .then(response => resolve(response))
         .catch((err: AxiosError) => {
-          const statusCode = (err.response && err.response.status && err.response.status) || 0
-          return reject(ErrorSchema.of(err, statusCode))
-        })
-    })
+          const statusCode = (err.response && err.response.status && err.response.status) || 0;
+          return reject(ErrorSchema.of(err, statusCode));
+        });
+    });
   }
 }
