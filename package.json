@@ -25,10 +25,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "axios": "^1.4.0",
-    "got": "^13.0.0",
-    "isomorphic-fetch": "^3.0.0",
-    "request": "^2.88.2"
+    "axios": "^1.4.0"
   },
   "devDependencies": {
     "@types/got": "^9.6.12",
@@ -43,5 +40,10 @@
     "sucrase": "^3.10.1",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.3"
+  },
+  "peerDependencies": {
+    "got": "^13.0.0",
+    "isomorphic-fetch": "^3.0.0",
+    "request": "^2.88.2"
   }
 }
