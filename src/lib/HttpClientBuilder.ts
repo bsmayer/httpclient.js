@@ -1,5 +1,4 @@
 import { AxiosStatic } from 'axios';
-import { RequestAPI, Request, CoreOptions, RequiredUriUrl } from 'request';
 import { GotInstance } from 'got';
 
 import HttpClient from './HttpClient';
@@ -25,11 +24,6 @@ export default class HttpClientBuilder {
 
   public useAxios(axios: AxiosStatic): HttpClientBuilder {
     this.configuration.setRestClient(axios, RestClient.AXIOS);
-    return this;
-  }
-
-  public useRequest(request: RequestAPI<Request, CoreOptions, RequiredUriUrl>): HttpClientBuilder {
-    this.configuration.setRestClient(request, RestClient.REQUEST);
     return this;
   }
 

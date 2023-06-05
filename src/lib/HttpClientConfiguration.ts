@@ -35,10 +35,6 @@ export default class HttpClientConfiguration {
     return this.restClientType === RestClient.AXIOS;
   }
 
-  public isRequest(): boolean {
-    return this.restClientType === RestClient.REQUEST;
-  }
-
   public isGot(): boolean {
     return this.restClientType === RestClient.GOT;
   }

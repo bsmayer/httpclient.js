@@ -18,6 +18,8 @@
 
 [![npm version](https://badge.fury.io/js/httpclient.js.svg)](https://badge.fury.io/js/httpclient.js)
 
+**Please note:** From the version 3.1.0 we've dropped support for `request`. Make sure to update your project to one of the supported rest clients.<br /><br />
+
 Friendly wrapper to use with your favorite rest client in your Javascript projects. Through intuitive builders, you can make your requests looking much more readable, isolating your configuration and creating robust api calls without having to worry about the library you're using.
 
 Because we :heart: **axios**, this library is shipped with it already, but you're free to use your own instance of any of our supported clients.
@@ -25,7 +27,6 @@ Because we :heart: **axios**, this library is shipped with it already, but you'r
 Currently supported libraries are:
 
 - axios (https://github.com/axios/axios)
-- request (https://github.com/request/request)
 - got (https://github.com/sindresorhus/got)
 - fetch (https://github.com/matthew-andrews/isomorphic-fetch)
 
