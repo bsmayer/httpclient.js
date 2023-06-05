@@ -43,11 +43,11 @@ We strongly recommend the use of this library with **Typescript**.
 
 # Motivation
 
-With the large amount of rest clients out there, choosing between them can be quite painful. But we all have the right to use our favorites, right? **The problem is**, none of them have the same syntax or use the same approach for handling errors. Also, creating middleware is not that intuitive and making complex requests can become not as readable as we want.
+With the large amount of rest clients out there, choosing between them can be quite painful. But we all have the right to use our favorites, right? **The problem is**, none of them have the same syntax or use the same approach for handling errors. Also, creating middlewares is not that intuitive and making complex requests can become not as readable as we want.
 
 So, what if we could always use the same code, no matter what rest client we're using, with a nice query builder?
 
-**That's the main idea of HTTPCLIENT.JS** - This is not another rest client. This is a wrapper for improving the creating of your requests and the readability of your code, while working with the well known and solid rest clients out there.
+**That's the main idea of HTTPCLIENT.JS** - This is not another rest client. This is a wrapper for improving the creation of your requests and the readability of your code, while working with the well known and solid rest clients out there.
 
 # Installation
 
@@ -60,6 +60,8 @@ Or
 ```bash
 npm install httpclient.js --save
 ```
+
+Also, if you're not using Axios (or if you want to control the axios version yourself), make sure to add to your project one of the supported rest clients.
 
 # Getting started
 
